@@ -105,21 +105,33 @@
             border-radius: var(--radius);
             border: 1px solid var(--border-color);
             overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
         }
 
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.04);
-        }
-
-        .product-img {
+        /* Галерея з прокруткою фото в карточці */
+        .product-gallery {
+            position: relative;
             width: 100%;
             height: 220px;
             background-color: #EFECE6;
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+
+        .product-gallery::-webkit-scrollbar {
+            display: none;
+        }
+
+        .product-gallery img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+            cursor: pointer;
         }
 
         .product-content {
@@ -159,7 +171,7 @@
             font-size: 16px;
         }
 
-        /* Модальне вікно адмінки */
+        /* Модальні вікна */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -200,11 +212,7 @@
             font-size: 20px;
             cursor: pointer;
             color: var(--text-secondary);
-        }
-
-        .admin-modal h2 {
-            font-size: 22px;
-            margin-bottom: 20px;
+            z-index: 10;
         }
 
         .form-group {
@@ -230,15 +238,6 @@
             outline: none;
         }
 
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--accent-color);
-        }
-
-        textarea {
-            resize: vertical;
-            height: 90px;
-        }
-
         .btn-submit {
             background-color: var(--accent-color);
             color: white;
@@ -249,12 +248,36 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
             margin-top: 10px;
         }
 
-        .btn-submit:hover {
-            background-color: var(--accent-hover);
+        /* Модальне вікно для зуму фото */
+        .zoom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .zoom-modal.active {
+            display: flex;
+        }
+
+        .zoom-modal img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transform-origin: center;
+            transition: transform 0.1s ease-out;
+            cursor: grab;
         }
     </style>
 </head>
@@ -282,7 +305,7 @@
     <div class="modal-overlay" id="admin-modal">
         <div class="admin-modal">
             <button class="close-modal" id="close-admin">&times;</button>
-            <h2>Додати новий товар</h2>
+            <h2 style="margin-bottom: 20px;">Додати новий товар</h2>
             
             <form id="add-product-form">
                 <div class="form-group">
@@ -307,12 +330,12 @@
 
                 <div class="form-group">
                     <label for="description">Опис</label>
-                    <textarea id="description" placeholder="Стан, склад тканини, розмір..."></textarea>
+                    <textarea id="description" style="height: 90px;" placeholder="Стан, склад тканини, розмір..."></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="image">Фотографія товару</label>
-                    <input type="file" id="image" accept="image/*">
+                    <label for="images">Фотографії (можна вибрати кілька)</label>
+                    <input type="file" id="images" accept="image/*" multiple>
                 </div>
 
                 <button type="submit" class="btn-submit" id="submit-btn">Опублікувати оголошення</button>
@@ -320,25 +343,27 @@
         </div>
     </div>
 
-    <!-- Підключаємо Supabase SDK та логіку -->
+    <!-- Модальне вікно для зуму картинок -->
+    <div class="zoom-modal" id="zoom-modal">
+        <button class="close-modal" id="close-zoom" style="color: white; font-size: 30px;">&times;</button>
+        <img id="zoomed-img" src="" alt="Zoomed">
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://hwdidcerlfczccmqioby.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_06UBKOGh2dwXy6WK8VkO4w_wJGn0FfA';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Кнопки управління модальним вікном адмінки
+        // Кнопки управління адмінкою
         const modal = document.getElementById('admin-modal');
         document.getElementById('open-admin').addEventListener('click', () => modal.classList.add('active'));
         document.getElementById('close-admin').addEventListener('click', () => modal.classList.remove('active'));
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.classList.remove('active');
-        });
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
 
-        // Завантаження товарів на головну сторінку
+        // Завантаження товарів
         async function loadProducts() {
             const container = document.getElementById('products-container');
-            
             const { data, error } = await supabaseClient
                 .from('products')
                 .select('*')
@@ -356,10 +381,25 @@
 
             container.innerHTML = '';
             data.forEach(product => {
+                let imagesHtml = '';
+                // Перевіряємо зображення (може бути масив або строка через кому)
+                let imgs = [];
+                if (Array.isArray(product.image_url)) {
+                    imgs = product.image_url;
+                } else if (typeof product.image_url === 'string' && product.image_url) {
+                    try { imgs = JSON.parse(product.image_url); } catch(e) { imgs = [product.image_url]; }
+                }
+
+                if (imgs.length === 0) imgs = ['https://via.placeholder.com/300x220?text=No+Photo'];
+
+                imgs.forEach(url => {
+                    imagesHtml += `<img src="${url}" alt="${product.title}" onclick="openZoom('${url}')">`;
+                });
+
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.innerHTML = `
-                    <img src="${product.image_url || 'https://via.placeholder.com/300x220?text=No+Photo'}" alt="${product.title}" class="product-img">
+                    <div class="product-gallery">${imagesHtml}</div>
                     <div class="product-content">
                         <span class="product-category">${product.category}</span>
                         <h3 class="product-title">${product.title}</h3>
@@ -370,10 +410,9 @@
             });
         }
 
-        // Обробка форми додавання товару
+        // Відправка форми з кількома фото
         document.getElementById('add-product-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.textContent = 'Зберігається...';
             submitBtn.disabled = true;
@@ -382,33 +421,28 @@
             const category = document.getElementById('category').value;
             const price = Number(document.getElementById('price').value);
             const description = document.getElementById('description').value;
-            const imageFile = document.getElementById('image').files[0];
+            const imageFiles = document.getElementById('images').files;
 
-            let imageUrl = '';
+            let uploadedUrls = [];
 
-            if (imageFile) {
-                const fileName = `${Date.now()}_${imageFile.name}`;
+                for (let i = 0; i < imageFiles.length; i++) {
+                const file = imageFiles[i];
+                const fileName = `${Date.now()}_${i}_${file.name}`;
                 const { error: uploadError } = await supabaseClient.storage
-                    .from('product-images')
-                    .upload(fileName, imageFile);
+                    .from('images') // <--- ЗМІНИЛИ НА 'images'
+                    .upload(fileName, file);
 
-                if (uploadError) {
-                    alert('Помилка завантаження фото: ' + uploadError.message);
-                    submitBtn.textContent = 'Опублікувати оголошення';
-                    submitBtn.disabled = false;
-                    return;
+                if (!uploadError) {
+                    const { data: publicUrlData } = supabaseClient.storage
+                        .from('images')
+                        .getPublicUrl(fileName);
+                    uploadedUrls.push(publicUrlData.publicUrl);
                 }
-
-                const { data: publicUrlData } = supabaseClient.storage
-                    .from('product-images')
-                    .getPublicUrl(fileName);
-                
-                imageUrl = publicUrlData.publicUrl;
             }
 
             const { error: insertError } = await supabaseClient
                 .from('products')
-                .insert([{ title, category, price, description, image_url: imageUrl }]);
+                .insert([{ title, category, price, description, image_url: uploadedUrls }]);
 
             if (insertError) {
                 alert('Помилка збереження товару: ' + insertError.message);
@@ -420,11 +454,59 @@
                 document.getElementById('add-product-form').reset();
                 submitBtn.textContent = 'Опублікувати оголошення';
                 submitBtn.disabled = false;
-                loadProducts(); // Оновлюємо список товарів на сторінці без перезавантаження
+                loadProducts();
             }
         });
 
-        // Завантажуємо товари при відкритті сторінки
+        // Логіка Зуму (Pinch-to-zoom / переміщення)
+        const zoomModal = document.getElementById('zoom-modal');
+        const zoomedImg = document.getElementById('zoomed-img');
+        let scale = 1, posX = 0, posY = 0, startX = 0, startY = 0, isDragging = false;
+
+        window.openZoom = function(url) {
+            zoomedImg.src = url;
+            scale = 1; posX = 0; posY = 0;
+            updateTransform();
+            zoomModal.classList.add('active');
+        }
+
+        document.getElementById('close-zoom').addEventListener('click', () => zoomModal.classList.remove('active'));
+        zoomModal.addEventListener('click', (e) => { if(e.target === zoomModal) zoomModal.classList.remove('active'); });
+
+        function updateTransform() {
+            zoomedImg.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+        }
+
+        zoomedImg.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                startX = e.touches[0].clientX - posX;
+                startY = e.touches[0].clientY - posY;
+            }
+        });
+
+        zoomedImg.addEventListener('touchmove', (e) => {
+            if (isDragging && e.touches.length === 1) {
+                posX = e.touches[0].clientX - startX;
+                posY = e.touches[0].clientY - startY;
+                updateTransform();
+            }
+        });
+
+        zoomedImg.addEventListener('touchend', () => { isDragging = false; });
+
+        // Подвійний тап для збільшення/скидання
+        let lastTap = 0;
+        zoomedImg.addEventListener('click', (e) => {
+            let now = new Date().getTime();
+            if (now - lastTap < 300) {
+                scale = scale === 1 ? 2.5 : 1;
+                posX = 0; posY = 0;
+                updateTransform();
+            }
+            lastTap = now;
+        });
+
         loadProducts();
     </script>
 </body>
