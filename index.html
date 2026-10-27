@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -12,7 +13,13 @@
             --text-secondary: #7C8580;
             --accent-color: #8EA89D;
             --accent-hover: #739083;
+            --danger-color: #E76F51;
+            --danger-hover: #D85D3F;
             --border-color: #E3E0D8;
+            --star-color: #FFB800;
+            --boy-color: #3B82F6;
+            --girl-color: #EC4899;
+            --unisex-color: #10B981;
             --radius: 12px;
         }
 
@@ -32,7 +39,7 @@
         header {
             background-color: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
-            padding: 20px 0;
+            padding: 16px 0;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -61,6 +68,72 @@
             color: var(--accent-color);
         }
 
+        .nav-btns {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-orders {
+            background-color: #3B82F6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-orders:hover {
+            background-color: #2563EB;
+        }
+
+        .orders-badge {
+            background-color: #EF4444;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 7px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px 22px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 999;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .floating-cart-btn:hover {
+            background-color: var(--accent-hover);
+            transform: scale(1.05);
+        }
+
+        .cart-badge {
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 12px;
+            border-radius: 10px;
+            padding: 2px 7px;
+            font-weight: bold;
+        }
+
         .btn-admin {
             background-color: transparent;
             border: 1px solid var(--accent-color);
@@ -77,27 +150,55 @@
             color: white;
         }
 
+        .btn-add {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+        }
+
+        .btn-add:hover {
+            background-color: var(--accent-hover);
+        }
+
         .hero {
-            padding: 40px 0 20px;
+            padding: 30px 0 10px;
             text-align: center;
         }
 
         .hero h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .hero p {
             color: var(--text-secondary);
-            font-size: 16px;
+            font-size: 15px;
+        }
+
+        .admin-banner {
+            background-color: #E8F0EC;
+            color: #2D5A47;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #C4DFCF;
         }
 
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 24px;
-            margin: 40px 0 60px;
+            margin: 20px 0 60px;
         }
 
         .product-card {
@@ -107,9 +208,15 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
         }
 
-        /* Галерея з прокруткою фото в карточці */
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+
         .product-gallery {
             position: relative;
             width: 100%;
@@ -141,26 +248,121 @@
             flex-grow: 1;
         }
 
+        .product-meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
         .product-category {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 4px;
+        }
+
+        .gender-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .gender-boy {
+            background-color: #E0F2FE;
+            color: #0284C7;
+        }
+
+        .gender-girl {
+            background-color: #FCE7F3;
+            color: #DB2777;
+        }
+
+        .gender-unisex {
+            background-color: #D1FAE5;
+            color: #059669;
         }
 
         .product-title {
             font-size: 16px;
             font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .card-rating-summary {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
             margin-bottom: 8px;
+        }
+
+        .card-rating-summary .stars {
+            color: var(--star-color);
+        }
+
+        .product-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 1px solid #F0ECE4;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .product-price {
             font-size: 18px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-top: auto;
-            margin-bottom: 12px;
+        }
+
+        .btn-buy {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-buy:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-delete {
+            background-color: #FDF2F0;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: none;
+        }
+
+        .btn-delete:hover {
+            background-color: var(--danger-color);
+            color: white;
         }
 
         .no-products {
@@ -171,7 +373,6 @@
             font-size: 16px;
         }
 
-        /* Модальні вікна */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -190,13 +391,13 @@
             display: flex;
         }
 
-        .admin-modal {
+        .modal-box {
             background: var(--card-bg);
             width: 100%;
-            max-width: 600px;
+            max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
-            padding: 30px;
+            padding: 24px;
             border-radius: var(--radius);
             border: 1px solid var(--border-color);
             position: relative;
@@ -205,34 +406,34 @@
 
         .close-modal {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 16px;
+            right: 16px;
             background: none;
             border: none;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
             color: var(--text-secondary);
             z-index: 10;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         label {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--text-secondary);
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 12px;
+            padding: 10px 12px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 14px;
             background-color: var(--bg-color);
             color: var(--text-primary);
             outline: none;
@@ -243,27 +444,84 @@
             color: white;
             border: none;
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             margin-top: 10px;
         }
 
-        /* Модальне вікно для зуму фото */
+        .btn-submit:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .cart-item-info {
+            flex-grow: 1;
+        }
+
+        .cart-item-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .cart-item-price {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .cart-qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-qty {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 18px 0;
+            padding-top: 12px;
+            border-top: 2px dashed var(--border-color);
+        }
+
         .zoom-modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            overflow: hidden;
             touch-action: none;
         }
 
@@ -272,242 +530,244 @@
         }
 
         .zoom-modal img {
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 90%;
+            max-height: 85%;
             object-fit: contain;
-            transform-origin: center;
             transition: transform 0.1s ease-out;
-            cursor: grab;
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="container header-flex">
-            <a href="#" class="logo">Затишок<span>Kids</span></a>
-            <button class="btn-admin" id="open-admin">Додати товар (Адмін)</button>
-        </div>
-    </header>
-
-    <div class="container">
-        <section class="hero">
-            <h1>Якісний та зручний одяг для малюків</h1>
-            <p>Підібрано з турботою та любов'ю до деталей</p>
-        </section>
-
-        <div class="products-grid" id="products-container">
-            <div class="no-products">Завантаження товарів...</div>
-        </div>
-    </div>
-
-    <!-- Модальне вікно адмін-панелі -->
-    <div class="modal-overlay" id="admin-modal">
-        <div class="admin-modal">
-            <button class="close-modal" id="close-admin">&times;</button>
-            <h2 style="margin-bottom: 20px;">Додати новий товар</h2>
-            
-            <form id="add-product-form">
-                <div class="form-group">
-                    <label for="title">Назва товару</label>
-                    <input type="text" id="title" required placeholder="Наприклад: Комбінезон велюровий">
-                </div>
-
-                <div class="form-group">
-                    <label for="category">Категорія</label>
-                    <select id="category">
-                        <option value="Немовлята">Немовлята</option>
-                        <option value="Костюми">Костюми</option>
-                        <option value="Верхній одяг">Верхній одяг</option>
-                        <option value="Взуття">Взуття</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="price">Ціна (грн)</label>
-                    <input type="number" id="price" required placeholder="450">
-                </div>
-
-                <div class="form-group">
-                    <label for="description">Опис</label>
-                    <textarea id="description" style="height: 90px;" placeholder="Стан, склад тканини, розмір..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="images">Фотографії (можна вибрати кілька)</label>
-                    <input type="file" id="images" accept="image/*" multiple>
-                </div>
-
-                <button type="submit" class="btn-submit" id="submit-btn">Опублікувати оголошення</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Модальне вікно для зуму картинок -->
-    <div class="zoom-modal" id="zoom-modal">
-        <button class="close-modal" id="close-zoom" style="color: white; font-size: 30px;">&times;</button>
-        <img id="zoomed-img" src="" alt="Zoomed">
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SUPABASE_URL = 'https://hwdidcerlfczccmqioby.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_06UBKOGh2dwXy6WK8VkO4w_wJGn0FfA';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // Кнопки управління адмінкою
-        const modal = document.getElementById('admin-modal');
-        document.getElementById('open-admin').addEventListener('click', () => modal.classList.add('active'));
-        document.getElementById('close-admin').addEventListener('click', () => modal.classList.remove('active'));
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
-
-        // Завантаження товарів
-        async function loadProducts() {
-            const container = document.getElementById('products-container');
-            const { data, error } = await supabaseClient
-                .from('products')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                container.innerHTML = `<div class="no-products">Помилка завантаження: ${error.message}</div>`;
-                return;
-            }
-
-            if (!data || data.length === 0) {
-                container.innerHTML = `<div class="no-products">Поки що немає жодного оголошення. Натисніть кнопку "Додати товар" зверху!</div>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            data.forEach(product => {
-                let imagesHtml = '';
-                // Перевіряємо зображення (може бути масив або строка через кому)
-                let imgs = [];
-                if (Array.isArray(product.image_url)) {
-                    imgs = product.image_url;
-                } else if (typeof product.image_url === 'string' && product.image_url) {
-                    try { imgs = JSON.parse(product.image_url); } catch(e) { imgs = [product.image_url]; }
-                }
-
-                if (imgs.length === 0) imgs = ['https://via.placeholder.com/300x220?text=No+Photo'];
-
-                imgs.forEach(url => {
-                    imagesHtml += `<img src="${url}" alt="${product.title}" onclick="openZoom('${url}')">`;
-                });
-
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <div class="product-gallery">${imagesHtml}</div>
-                    <div class="product-content">
-                        <span class="product-category">${product.category}</span>
-                        <h3 class="product-title">${product.title}</h3>
-                        <div class="product-price">${product.price} грн</div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
+            user-select: none;
         }
 
-        // Відправка форми з кількома фото
-        document.getElementById('add-product-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.textContent = 'Зберігається...';
-            submitBtn.disabled = true;
-
-            const title = document.getElementById('title').value;
-            const category = document.getElementById('category').value;
-            const price = Number(document.getElementById('price').value);
-            const description = document.getElementById('description').value;
-            const imageFiles = document.getElementById('images').files;
-
-            let uploadedUrls = [];
-
-                for (let i = 0; i < imageFiles.length; i++) {
-                const file = imageFiles[i];
-                const fileName = `${Date.now()}_${i}_${file.name}`;
-                const { error: uploadError } = await supabaseClient.storage
-                    .from('images') // <--- ЗМІНИЛИ НА 'images'
-                    .upload(fileName, file);
-
-                if (!uploadError) {
-                    const { data: publicUrlData } = supabaseClient.storage
-                        .from('images')
-                        .getPublicUrl(fileName);
-                    uploadedUrls.push(publicUrlData.publicUrl);
-                }
-            }
-
-            const { error: insertError } = await supabaseClient
-                .from('products')
-                .insert([{ title, category, price, description, image_url: uploadedUrls }]);
-
-            if (insertError) {
-                alert('Помилка збереження товару: ' + insertError.message);
-                submitBtn.textContent = 'Опублікувати оголошення';
-                submitBtn.disabled = false;
-            } else {
-                alert('Товар успішно додано!');
-                modal.classList.remove('active');
-                document.getElementById('add-product-form').reset();
-                submitBtn.textContent = 'Опублікувати оголошення';
-                submitBtn.disabled = false;
-                loadProducts();
-            }
-        });
-
-        // Логіка Зуму (Pinch-to-zoom / переміщення)
-        const zoomModal = document.getElementById('zoom-modal');
-        const zoomedImg = document.getElementById('zoomed-img');
-        let scale = 1, posX = 0, posY = 0, startX = 0, startY = 0, isDragging = false;
-
-        window.openZoom = function(url) {
-            zoomedImg.src = url;
-            scale = 1; posX = 0; posY = 0;
-            updateTransform();
-            zoomModal.classList.add('active');
+        .zoom-nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: background 0.2s, transform 0.2s;
+            user-select: none;
+            z-index: 2010;
         }
 
-        document.getElementById('close-zoom').addEventListener('click', () => zoomModal.classList.remove('active'));
-        zoomModal.addEventListener('click', (e) => { if(e.target === zoomModal) zoomModal.classList.remove('active'); });
-
-        function updateTransform() {
-            zoomedImg.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+        .zoom-nav-arrow:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-50%) scale(1.08);
         }
 
-        zoomedImg.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 1) {
-                isDragging = true;
-                startX = e.touches[0].clientX - posX;
-                startY = e.touches[0].clientY - posY;
-            }
-        });
+        .zoom-nav-arrow.prev { left: 16px; }
+        .zoom-nav-arrow.next { right: 16px; }
 
-        zoomedImg.addEventListener('touchmove', (e) => {
-            if (isDragging && e.touches.length === 1) {
-                posX = e.touches[0].clientX - startX;
-                posY = e.touches[0].clientY - startY;
-                updateTransform();
-            }
-        });
+        .zoom-photo-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            letter-spacing: 1px;
+            z-index: 2010;
+        }
 
-        zoomedImg.addEventListener('touchend', () => { isDragging = false; });
+        .confirm-box {
+            text-align: center;
+        }
+        .confirm-btns {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .btn-confirm-yes {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-confirm-yes:hover {
+            background-color: var(--danger-hover);
+        }
+        .btn-confirm-no {
+            background-color: var(--border-color);
+            color: var(--text-primary);
+            border: none;
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-        // Подвійний тап для збільшення/скидання
-        let lastTap = 0;
-        zoomedImg.addEventListener('click', (e) => {
-            let now = new Date().getTime();
-            if (now - lastTap < 300) {
-                scale = scale === 1 ? 2.5 : 1;
-                posX = 0; posY = 0;
-                updateTransform();
-            }
-            lastTap = now;
-        });
+        .details-gallery {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+        }
 
-        loadProducts();
-    </script>
-</body>
-</html>
+        .details-gallery img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            flex-shrink: 0;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .details-gallery img.active-thumb {
+            border-color: var(--accent-color);
+        }
+
+        .main-photo-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            background-color: #EFECE6;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            cursor: pointer;
+        }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.85);
+            color: var(--text-primary);
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: background 0.2s, transform 0.2s;
+            user-select: none;
+            z-index: 10;
+        }
+
+        .nav-arrow:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-50%) scale(1.08);
+        }
+
+        .nav-arrow.prev { left: 10px; }
+        .nav-arrow.next { right: 10px; }
+
+        .photo-counter {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .error-msg {
+            color: var(--danger-color);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .reviews-section {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .search-filter-section {
+            margin: 20px 0 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 15px;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 2px 12px rgba(142, 168, 157, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        /* Статі (Хлопчик / Дівчинка / Унісекс) */
+        .gender-tabs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .gender-tab-btn {
+            flex: 1;
+            padding: 9px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .gender-tab-btn:hover {
+            bor
